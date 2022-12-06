@@ -4,7 +4,6 @@
 
 Ordino is a lite learning management system
 file:///home/hena/Pictures/Screenshots/Screenshot%20from%202022-11-25%2014-29-24.png
-
 # Demo
 
 Here is a working live demo : https://ordino-2e073.web.app/
