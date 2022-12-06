@@ -42,11 +42,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Built with
 
-[Vue.js](https://vuejs.org/)
+[Vue.js](https://vuejs.org/) - A javascript framework that handles front end components.
 
-[Firebase](https://firebase.google.com/)
+[Firebase](https://firebase.google.com/) - A backend engine that gives a lot of functionalities
 
-[Vuetify](https://vuetifyjs.com/en/)
+[Vuetify](https://vuetifyjs.com/en/) - Premade vuejs components that simplify development
 
 ## [License](https://github.com/henapartae123/Ordino/LICENSE.md)
 
