@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <!-- Course Adding dialog -->
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent max-width="800px">
         <template v-slot:activator="{ on }">
@@ -18,16 +19,23 @@
                   <v-col cols="4">
                     <v-text-field
                       label="Name*"
-                      v-model="title"
+                      v-model="name"
                       :rules="name_rules"
                       required
                     ></v-text-field>
                   </v-col>
                   <v-col cols="4">
-                    <v-row>
-                      priority
-                      <span class="ml-2"> {{ priority }}</span>
-                      <v-spacer></v-spacer>
+                    <v-row wrap>
+                      <span
+                        class="
+                          pl-2
+                          grey--text
+                          text--darken-2
+                          font-weight-light
+                          text-caption
+                        "
+                        >priority</span
+                      >
                       <v-rating
                         v-model="priority"
                         color="green darken-3"
@@ -35,14 +43,28 @@
                         empty-icon="$ratingFull"
                         half-increments
                         hover
-                        small
+                        large
                       >
                       </v-rating>
                     </v-row>
                   </v-col>
 
                   <v-col cols="4">
-                    <v-text-field label="links" v-model="links"> </v-text-field>
+                    <!-- <div
+                      v-for="(input, index) in links"
+                      :key="`phoneInput-${index}`"
+                    > -->
+                    <v-text-field label="Video Link" v-model="links" outlined>
+                    </v-text-field>
+                    <!-- <v-btn @click="addField(input, links)" text
+                        ><v-icon color="blue" small> mdi-plus </v-icon></v-btn
+                      ><v-btn
+                        v-show="links.length > 1"
+                        @click="removeField(index, links)"
+                        text
+                        >remove</v-btn
+                      > -->
+                    <!-- </div> -->
                   </v-col>
                 </v-row>
                 <v-row>
@@ -127,9 +149,10 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <!-- Courses Table -->
     <template>
       <v-row justify="center">
-        <v-card>
+        <v-card color="grey lighten-4">
           <v-card-title>
             ADDED Courses
             <v-spacer></v-spacer>
@@ -141,7 +164,7 @@
               hide-details
             ></v-text-field>
           </v-card-title>
-          <v-data-table :headers="headers" :items="Course" :search="search">
+          <v-data-table :headers="headers" :items="Courses" :search="search">
             <template v-slot:item.id="{ item }">
               <!--<v-chip :color="getColor(item.calories)" dark>{{ item.calories }}</v-chip>-->
 
@@ -161,7 +184,7 @@
         </v-card>
       </v-row>
     </template>
-
+    <!-- Course Edit dialog -->
     <v-dialog v-model="edit_dialog" persistent max-width="600px">
       <v-card>
         <v-form>
@@ -171,35 +194,55 @@
           <v-card-text>
             <v-container>
               <v-row wrap>
-                <v-col cols="12">
+                <v-col cols="6">
                   <v-text-field
                     label="Name*"
-                    v-model="edit_title"
-                    prepend-icon="fa-pen"
+                    v-model="edit_Course.name"
                     :rules="name_rules"
                     required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="4">
+                  <v-row wrap>
+                    priority
+                    <span class="ml-2"> {{ priority }}</span>
+                    <v-spacer></v-spacer>
+                    <v-rating
+                      v-model="edit_Course.priority"
+                      color="green darken-3"
+                      background-color="grey darken-1"
+                      empty-icon="$ratingFull"
+                      half-increments
+                      hover
+                      small
+                    >
+                    </v-rating>
+                  </v-row>
+                </v-col>
+                <v-col cols="4">
                   <v-menu
                     ref="edit_menu"
-                    v-model="edit_menu"
+                    v-model="edit_Course.menu"
                     :close-on-content-click="false"
-                    :return-value.sync="edit_startdate"
+                    :return-value.sync="edit_Course.start"
                     transition="scale-transition"
                     offset-y
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="edit_startdate"
+                        v-model="edit_Course.start"
                         label="Start date"
                         :rules="name_rules"
                         readonly
                         v-on="on"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="edit_startdate" no-title scrollable>
+                    <v-date-picker
+                      v-model="edit_Course.start"
+                      no-title
+                      scrollable
+                    >
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="edit_menu = false"
                         >Cancel</v-btn
@@ -207,7 +250,7 @@
                       <v-btn
                         text
                         color="primary"
-                        @click="$refs.edit_menu.save(edit_startdate)"
+                        @click="$refs.edit_menu.save(edit_Course.start)"
                         >OK</v-btn
                       >
                     </v-date-picker>
@@ -218,21 +261,25 @@
                     ref="edit_menu2"
                     v-model="edit_menu2"
                     :close-on-content-click="false"
-                    :return-value.sync="edit_enddate"
+                    :return-value.sync="edit_Course.end"
                     transition="scale-transition"
                     offset-y
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="edit_enddate"
+                        v-model="edit_Course.end"
                         label="End date"
                         :rules="name_rules"
                         readonly
                         v-on="on"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="edit_enddate" no-title scrollable>
+                    <v-date-picker
+                      v-model="edit_Course.end"
+                      no-title
+                      scrollable
+                    >
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="edit_menu2 = false"
                         >Cancel</v-btn
@@ -240,7 +287,7 @@
                       <v-btn
                         text
                         color="primary"
-                        @click="$refs.edit_menu2.save(edit_enddate)"
+                        @click="$refs.edit_menu2.save(edit_Course.end)"
                         >OK</v-btn
                       >
                     </v-date-picker>
@@ -274,7 +321,7 @@ export default {
       dialog: false,
       edit_dialog: false,
 
-      title: "",
+      name: "",
       priority: 4,
       links: "",
       start: "",
@@ -282,16 +329,16 @@ export default {
       end: "",
       menu2: false,
 
-      edit_title: "",
+      edit_name: "",
       edit_startdate: "",
       edit_menu: false,
       edit_enddate: "",
       edit_menu2: false,
 
-      edit_course: {
-        title: "",
-        startdate: "",
-        enddate: "",
+      edit_Course: {
+        name: "",
+        date: "",
+        date: "",
       },
 
       currentUser: "",
@@ -300,24 +347,34 @@ export default {
 
       search: "",
       headers: [
-        { text: "Title", value: "title" },
-        { text: "Start Date", value: "startdate" },
-        { text: "End Date", value: "enddate" },
+        { text: "Name", value: "name" },
+        { text: "Start Date", value: "start" },
+        { text: "End Date", value: "end" },
         { text: "Priority", value: "priority" },
         { text: "Actions", value: "id" },
       ],
-      Course: [],
+      Courses: [],
     };
   },
 
   props: ["id"],
   methods: {
-    async edit_submit() {
+    /* edit */
+    edit(item) {
+      this.edit_dialog = true;
+      this.edit_Course.name = item.name;
+      this.edit_Course.start = item.start;
+      this.edit_Course.end = item.end;
+      this.edit_Course.id = item.id;
+      console.log(item.id);
+    },
+
+    edit_submit() {
       var sfDocRef = db.db
         .collection("Users")
-        .doc(this.id)
+        .doc(this.currentUser.uid)
         .collection("Courses")
-        .doc(this.edit_course.id);
+        .doc(this.edit_Course.id);
       return db.db
         .runTransaction((transaction) => {
           // This code may get re-run multiple times if there are conflicts.
@@ -326,7 +383,7 @@ export default {
               throw "Document does not exist!";
             }
 
-            transaction.update(sfDocRef, this.edit_course);
+            transaction.update(sfDocRef, this.edit_Course);
           });
         })
         .then(() => {
@@ -337,29 +394,24 @@ export default {
           console.log("Transaction failed: ", error);
         });
     },
-
-    edit(item) {
-      this.edit_course.title = item.title;
-      this.edit_course.startdate = item.startdate;
-      this.edit_course.enddate = item.enddate;
-      console.log(item.id);
-      this.edit_dialog = true;
-    },
-
+    /* delete */
     delete_(course) {
-      db.db
-        .collection("Users")
-        .doc(this.currentUser.uid)
-        .collection("Courses")
-        .doc(course.id)
-        .delete()
-        .then(() => {
-          console.log("success");
-        });
+      confirm("Are You sure?") &&
+        db.db
+          .collection("Users")
+          .doc(this.currentUser.uid)
+          .collection("Courses")
+          .doc(course.id)
+          .delete()
+          .then(() => {
+            console.log("success");
+          });
     },
+
+    /* create */
     submit() {
       const course = {
-        title: this.title,
+        name: this.name,
         priority: this.priority,
         links: this.links,
         start: this.start,
@@ -379,7 +431,7 @@ export default {
         });
     },
   },
-
+  /* read */
   created() {
     if (db.auth.currentUser) {
       this.isLoggedIn = true;
@@ -395,24 +447,24 @@ export default {
 
         changes.forEach((change) => {
           if (change.type === "added") {
-            this.Course.push({
+            this.Courses.push({
               ...change.doc.data(),
               id: change.doc.id,
             });
           } else if (change.type === "modified") {
-            console.log(this.Course.length);
+            console.log(this.Courses.length);
 
-            for (var i = 0; i < this.Course.length; i++) {
+            for (var i = 0; i < this.Courses.length; i++) {
               console.log(change.doc.id);
-              if (this.Course[i].id === change.doc.id) {
-                this.Course.splice(i, 1, change.doc.data());
+              if (this.Courses[i].id === change.doc.id) {
+                this.Courses.splice(i, 1, change.doc.data());
               }
             }
           } else if (change.type === "removed") {
-            for (var j = 0; j < this.Course.length; j++) {
+            for (var j = 0; j < this.Courses.length; j++) {
               console.log(change.doc.id);
-              if (this.Course[j].id === change.doc.id) {
-                this.Course.splice(j, 1);
+              if (this.Courses[j].id === change.doc.id) {
+                this.Courses.splice(j, 1);
               }
             }
           }

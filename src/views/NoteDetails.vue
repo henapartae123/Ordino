@@ -1,11 +1,11 @@
 <template>
   <v-row justify="center">
-    <v-card>
-      <v-container>
-        <v-card-title>
-          {{ Note.name }}
-        </v-card-title>
-      </v-container>
+    <v-card class="ma-6">
+      <v-card-title>
+        {{ Note.name }}
+      </v-card-title>
+
+      <p class="ma-3">{{ Note.content }}</p>
     </v-card>
   </v-row>
 </template>

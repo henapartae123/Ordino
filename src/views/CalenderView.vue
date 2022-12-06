@@ -1,71 +1,98 @@
 <template>
-  <div>
-    <v-row class="fill-height">
-      <v-col>
-        <v-sheet height="64">
-          <v-toolbar flat>
-            <v-btn
-              outlined
-              class="mr-4"
-              color="grey darken-2"
-              @click="setToday"
-            >
-              Today
-            </v-btn>
-            <v-btn fab text small color="grey darken-2" @click="prev">
-              <v-icon small> mdi-chevron-left </v-icon>
-            </v-btn>
-            <v-btn fab text small color="grey darken-2" @click="next">
-              <v-icon small> mdi-chevron-right </v-icon>
-            </v-btn>
-            <v-toolbar-title v-if="$refs.calendar">
-              {{ $refs.calendar.title }}
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-menu bottom right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-                  <span>{{ typeToLabel[type] }}</span>
-                  <v-icon right> mdi-menu-down </v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="type = 'day'">
-                  <v-list-item-title>Day</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Week</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'month'">
-                  <v-list-item-title>Month</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = '4day'">
-                  <v-list-item-title>4 days</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-toolbar>
-        </v-sheet>
-        <v-sheet height="600">
-          <v-calendar
-            ref="calendar"
-            v-model="focus"
-            color="primary"
-            :events="Course"
-            :event-color="getEventColor"
-            :type="type"
-            @click:more="viewDay"
-            @click:date="viewDay"
-          ></v-calendar>
-        </v-sheet>
-      </v-col>
-    </v-row>
-  </div>
+  <v-row class="fill-height">
+    <v-col>
+      <!-- calendar toolbar -->
+      <v-sheet height="64">
+        <v-toolbar flat>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+            Today
+          </v-btn>
+          <v-btn fab text small color="grey darken-2" @click="prev">
+            <v-icon small> mdi-chevron-left </v-icon>
+          </v-btn>
+          <v-btn fab text small color="grey darken-2" @click="next">
+            <v-icon small> mdi-chevron-right </v-icon>
+          </v-btn>
+          <v-toolbar-title v-if="$refs.calendar">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-menu bottom right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
+                <span>{{ typeToLabel[type] }}</span>
+                <v-icon right> mdi-menu-down </v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="type = 'day'">
+                <v-list-item-title>Day</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="type = 'week'">
+                <v-list-item-title>Week</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="type = 'month'">
+                <v-list-item-title>Month</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="type = '4day'">
+                <v-list-item-title>4 days</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-toolbar>
+      </v-sheet>
+      <!-- calender view -->
+      <v-sheet height="600">
+        <v-calendar
+          ref="calendar"
+          v-model="focus"
+          color="primary"
+          :events="events"
+          :event-color="color"
+          :now="today"
+          :type="type"
+          @click:event="showEvent"
+          @click:more="viewDay"
+          @click:date="viewDay"
+          @change="updateRange"
+        ></v-calendar>
+        <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"
+          offset-x
+        >
+          <v-card color="grey lighten-4" min-width="350px" flat>
+            <v-toolbar :color="selectedEvent.color" dark>
+              <v-btn icon>
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon>
+                <v-icon>mdi-heart</v-icon>
+              </v-btn>
+              <v-btn icon>
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </v-toolbar>
+            <v-card-text>
+              <span v-html="selectedEvent.details"></span>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn text color="secondary" @click="selectedOpen = false">
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
+      </v-sheet>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 import db from "@/fb.js";
-
 export default {
   data: () => ({
     today: new Date().toISOString().substr(0, 10),
@@ -77,21 +104,20 @@ export default {
       day: "Day",
       "4day": "4 Days",
     },
-    title: null,
+    name: null,
+    details: null,
     start: null,
     end: null,
-    color: "#1976D2",
-    Course: [],
+    color: "#0ead3b",
+    selectedEvent: {},
+    selectedElement: null,
+    selectedOpen: false,
+    events: [],
   }),
-  mounted() {},
+  mounted() {
+    this.getEvents();
+  },
   methods: {
-    viewDay({ date }) {
-      this.focus = date;
-      this.type = "day";
-    },
-    getEventColor(event) {
-      return event.color;
-    },
     setToday() {
       this.focus = "";
     },
@@ -102,71 +128,28 @@ export default {
       this.$refs.calendar.next();
     },
 
-    updateRange({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
+    async getEvents() {
+      {
+        let snapshot = await db.db
+          .collection("Users")
+          .doc(this.currentUser.uid)
+          .collection("Courses")
+          .get();
+        let events = [];
+        snapshot.forEach((doc) => {
+          let appData = doc.data();
+          appData.id = doc.id;
+          events.push(appData);
         });
+        this.events = events;
       }
-
-      this.events = events;
     },
   },
-
   created() {
     if (db.auth.currentUser) {
       this.isLoggedIn = true;
       this.currentUser = db.auth.currentUser;
     }
-
-    db.db
-      .collection("Users")
-      .doc(this.currentUser.uid)
-      .collection("Courses")
-      .onSnapshot((res) => {
-        const changes = res.docChanges();
-
-        changes.forEach((change) => {
-          if (change.type === "added") {
-            this.Course.push({
-              ...change.doc.data(),
-              id: change.doc.id,
-            });
-            console.log(Course);
-          } else if (change.type === "modified") {
-            console.log(this.Course.length);
-
-            for (var i = 0; i < this.Course.length; i++) {
-              window.console.log(change.doc.id);
-              if (this.Course[i].id === change.doc.id) {
-                this.Course.splice(i, 1, change.doc.data());
-              }
-            }
-          } else if (change.type === "removed") {
-            for (var j = 0; j < this.Course.length; j++) {
-              console.log(change.doc.id);
-              if (this.Course[j].id === change.doc.id) {
-                this.Course.splice(j, 1);
-              }
-            }
-          }
-        });
-      });
   },
 };
 </script>

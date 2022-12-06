@@ -5,6 +5,7 @@
         <v-card-title>
           <span class="headline">Register</span>
         </v-card-title>
+        <!-- register form -->
         <v-container>
           <v-row wrap>
             <v-col cols="12">
@@ -90,6 +91,7 @@ export default {
     };
   },
   methods: {
+    /* creating a user */
     submit() {
       auth.auth
         .createUserWithEmailAndPassword(this.email, this.password)
@@ -98,6 +100,7 @@ export default {
           return db.db.collection("Users").doc(cred.user.uid).set({
             firstname: this.firstname,
             lastname: this.lastname,
+            email: this.email,
           });
         })
         .then(() => {

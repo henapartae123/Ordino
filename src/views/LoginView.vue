@@ -1,13 +1,14 @@
 <template>
   <div class="login">
-    <v-row justify="center" class="my-12 py-12">
-      <v-card min-height="400" min-width="400" color="white lighten-4">
+    <v-row justify="center" class="my-6 py-6">
+      <v-card min-height="400" max-width="450" color="white lighten-4">
         <v-card-title>
           <span class="headline">Log In</span>
         </v-card-title>
+        <!-- login form -->
         <v-container>
           <v-row wrap>
-            <v-col cols="12">
+            <v-col cols="10">
               <v-text-field
                 label="Email*"
                 v-model="email"
@@ -17,14 +18,14 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="10">
               <v-text-field
                 v-model="password"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
                 :type="show1 ? 'text' : 'password'"
                 name="input-10-1"
-                label="Password"
+                label="Password*"
                 hint="At least 8 characters"
                 density="compact"
                 counter
@@ -42,15 +43,13 @@
           >
           <v-btn color="green darken-1" text @click="login">Log In</v-btn>
         </v-card-actions>
-
-        
       </v-card>
     </v-row>
   </div>
 </template>
 
 <script>
-import auth from '@/fb.js'
+import auth from "@/fb.js";
 
 export default {
   data() {
@@ -69,14 +68,17 @@ export default {
     };
   },
   methods: {
-    login(){
-            auth.auth.signInWithEmailAndPassword(this.email, this.password).then(() => {
-                    this.$router.go({path: this.$router.path});
-                }, err => {
-                    alert(err.message);
-                }
-            )
+    /* logging in */
+    login() {
+      auth.auth.signInWithEmailAndPassword(this.email, this.password).then(
+        () => {
+          this.$router.go({ path: this.$router.path });
+        },
+        (err) => {
+          alert(err.message);
         }
+      );
+    },
   },
 };
 </script>

@@ -34,12 +34,12 @@
         <span class="hidden-sm-and-down white--text">Ordino</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <v-btn v-if="!isLoggedIn" router :to="`/login`" icon px-5>
         <v-icon>fa-sign-in</v-icon>
         <span>Log In</span>
       </v-btn>
-      <v-spacer></v-spacer>
       <v-btn v-if="isLoggedIn" v-on:click="logout" icon px-2>
         <v-icon>fa-sign-out</v-icon>
         <span>Sign Out</span>
