@@ -49,4 +49,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 [Vuetify](https://vuetifyjs.com/en/)
 
 ## [License](https://github.com/henapartae123/Ordino/LICENSE.md)
-MIT © henapartae123
+
+MIT © [Henok Shewakena](https://github.com/henapartae123)
