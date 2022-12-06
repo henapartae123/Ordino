@@ -46,7 +46,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 [Firebase](https://firebase.google.com/)
 
-[Vuetify] (https://vuetifyjs.com/en/)
+[Vuetify](https://vuetifyjs.com/en/)
 
 ## [License](https://github.com/henapartae123/Ordino/LICENSE.md)
 MIT © henapartae123
