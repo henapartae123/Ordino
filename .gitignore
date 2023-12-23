@@ -2,6 +2,8 @@
 node_modules
 /dist
 src/fb.js
+.firebase
+.github
 
 # local env files
 .env.local
