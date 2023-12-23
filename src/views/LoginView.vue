@@ -43,9 +43,6 @@
           >
           <v-btn color="green darken-1" text @click="login">Log In</v-btn>
         </v-card-actions>
-        
-        <small>Test Email: johndoe@gmail.com</small><v-spacer></v-spacer>
-        <small>Test Password: 123456789</small>
       </v-card>
     </v-row>
   </div>
